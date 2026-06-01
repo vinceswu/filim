@@ -1,0 +1,333 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+
+@layer components {
+  .dialog-overlay-centered {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 py-6;
+  }
+
+  .dialog-overlay-intercept {
+    @apply fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm pt-8 sm:pt-12 pb-8 px-4 sm:px-0 scrollbar-none;
+  }
+
+  .dialog-panel-shell {
+    @apply bg-surface border border-neutral-800 rounded-xl shadow-dialog;
+  }
+
+  .dialog-input {
+    @apply w-full rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white transition-colors;
+  }
+
+  /* Large PIN-style field */
+  .dialog-input-emphasis {
+    @apply w-full rounded-lg bg-neutral-900 border-2 border-neutral-800 px-4 py-4 text-2xl text-white text-center tracking-[1em] focus:outline-none focus:border-ncyan transition-all;
+  }
+
+  .player-menu-popover {
+    @apply rounded-lg bg-background/95 backdrop-blur-3xl border border-white/10 shadow-2xl ring-1 ring-white/5;
+  }
+
+  .player-menu-scrim {
+    @apply absolute inset-0 bg-black/60;
+  }
+
+  .player-menu-sheet {
+    @apply absolute bottom-0 left-0 right-0 flex flex-col rounded-t-2xl bg-playerSheet border-t border-white/10 px-4 pt-3 pb-8;
+  }
+
+  .player-menu-sheet-handle {
+    @apply w-10 h-1 shrink-0 bg-neutral-600 rounded-full mx-auto mb-4;
+  }
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button,
+a,
+[role="button"],
+[role="link"] {
+  touch-action: manipulation;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.scrollbar-netflix::-webkit-scrollbar {
+  height: 3px;
+}
+
+.scrollbar-netflix::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-netflix::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Card row hover — dim siblings only when a card is actually hovered.
+   Uses :has() so the trigger is card-hover, not row-area-hover. */
+@media (min-width: 768px) {
+  .group\/row-inner:has(.group\/card:hover) .group\/card:not(:hover) {
+    opacity: 0.35;
+    transition: opacity 200ms ease;
+  }
+
+  .group\/row-inner .group\/card:hover {
+    opacity: 1 !important;
+    transition: opacity 200ms ease;
+  }
+}
+
+/* Row edge-fade overlays for scroll indication (desktop only) */
+.row-fade-left,
+.row-fade-right {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4%;
+  z-index: 30;
+  transition: opacity 0.3s ease;
+}
+
+.row-fade-left {
+  left: 0;
+  background: linear-gradient(to right, #141414 0%, transparent 100%);
+}
+
+.row-fade-right {
+  right: 0;
+  background: linear-gradient(to left, #141414 0%, transparent 100%);
+}
+
+@media (max-width: 767px) {
+
+  .row-fade-left,
+  .row-fade-right {
+    display: none;
+  }
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #06b6d4;
+  margin-top: -5px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #06b6d4;
+  border: none;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Safe area insets for notched phones (iPhone X+ in landscape) */
+@supports (padding: env(safe-area-inset-left)) {
+  .player-safe-area {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent pull-to-refresh and overscroll when in player */
+.overscroll-none {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* Custom scrollbar for mobile bottom sheets */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Mobile tap zone feedback */
+@media (max-width: 639px) {
+  .mobile-tap-zone:active {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+  }
+}
+
+@layer utilities {
+  .select-text {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+}

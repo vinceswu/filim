@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "filim-backend"
+version = "0.1.0"
+description = "FastAPI backend for Filim — a streaming platform for anime, shows, and movies (catalog and playback)."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Filim", email = "dev@example.local" }
+]
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "httpx[http2]>=0.27.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.3.0",
+  "SQLAlchemy>=2.0.30",
+  "aiosqlite>=0.20.0",
+  "alembic>=1.13.0",
+  "python-dotenv>=1.0.1",
+  "m3u8>=5.0.0",
+  "curl-cffi>=0.15.0",
+  "cryptography>=44.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "httpx>=0.27.0",
+  "ruff>=0.8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = ["logs*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
