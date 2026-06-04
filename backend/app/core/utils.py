@@ -15,6 +15,7 @@ def proxy_img_url(url: str | None) -> str | None:
         return f"/api/v1/stream/image?url={quote(url, safe='')}"
     return url
 
+
 TITLE_CLEANUP_REGEXES = [
     (re.compile(r"\s*\(.*?\)\s*"), " "),
     (re.compile(r"\s+"), " "),

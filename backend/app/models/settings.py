@@ -17,8 +17,14 @@ class AppSettings(Base):
         DateTime(timezone=True), nullable=True
     )
 
-    allow_creating_profiles: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    guest_profile_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    allow_creating_profiles: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True
+    )
+    guest_profile_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True
+    )
     max_profiles: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    require_profile_pins: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    require_profile_pins: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
     max_concurrent_streams: Mapped[int | None] = mapped_column(Integer, nullable=True)

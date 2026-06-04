@@ -36,7 +36,9 @@ class PersistentCache:
     triggers background revalidation rather than eviction."""
 
     def __init__(self) -> None:
-        self._l1: Dict[str, Tuple[str, float, float]] = {}  # value, expires_at, stale_at
+        self._l1: Dict[str, Tuple[str, float, float]] = (
+            {}
+        )  # value, expires_at, stale_at
         self._db: Optional[aiosqlite.Connection] = None
         self._initialized: bool = False
         self._init_lock: Optional[asyncio.Lock] = None
@@ -63,16 +65,14 @@ class PersistentCache:
         await db.execute("PRAGMA journal_mode=WAL")
         await db.execute("PRAGMA synchronous=NORMAL")
         await db.execute("PRAGMA busy_timeout=5000")
-        await db.execute(
-            """
+        await db.execute("""
             CREATE TABLE IF NOT EXISTS cache (
                 key        TEXT PRIMARY KEY,
                 value      TEXT NOT NULL,
                 expires_at REAL NOT NULL,
                 stale_at   REAL NOT NULL DEFAULT 0
             )
-            """
-        )
+            """)
         await db.execute(
             "CREATE INDEX IF NOT EXISTS idx_cache_exp ON cache(expires_at)"
         )
@@ -218,10 +218,7 @@ class PersistentCache:
 
     async def _prune(self) -> None:
         now = time.time()
-        expired = [
-            k for k, (_, exp, _s) in self._l1.items()
-            if exp <= now
-        ]
+        expired = [k for k, (_, exp, _s) in self._l1.items() if exp <= now]
         for k in expired:
             del self._l1[k]
 

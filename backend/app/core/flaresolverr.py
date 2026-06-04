@@ -98,6 +98,7 @@ async def flarefetch(url: str, params: dict[str, str] | None = None) -> dict[str
     """
     if params:
         from urllib.parse import urlencode
+
         full_url = f"{url}?{urlencode(params)}"
     else:
         full_url = url

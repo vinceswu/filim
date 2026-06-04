@@ -48,9 +48,7 @@ def _apply_sqlite_debrand_migrations(connection: Connection) -> None:
         )
         logger.info("Renamed episodes.anime_id -> show_id")
 
-    if "show_stats" in tables and "anime_id" in _column_names(
-        connection, "show_stats"
-    ):
+    if "show_stats" in tables and "anime_id" in _column_names(connection, "show_stats"):
         connection.execute(
             text("ALTER TABLE show_stats RENAME COLUMN anime_id TO show_id")
         )
@@ -60,9 +58,7 @@ def _apply_sqlite_debrand_migrations(connection: Connection) -> None:
         connection, "profile_list_entries"
     ):
         connection.execute(
-            text(
-                "ALTER TABLE profile_list_entries RENAME COLUMN anime_id TO show_id"
-            )
+            text("ALTER TABLE profile_list_entries RENAME COLUMN anime_id TO show_id")
         )
         logger.info("Renamed profile_list_entries.anime_id -> show_id")
 
@@ -88,9 +84,7 @@ def _apply_sqlite_debrand_migrations(connection: Connection) -> None:
         )
         logger.info("Renamed shows.allanime_raw -> provider_raw")
 
-    if "episodes" in tables and "allanime_raw" in _column_names(
-        connection, "episodes"
-    ):
+    if "episodes" in tables and "allanime_raw" in _column_names(connection, "episodes"):
         connection.execute(
             text("ALTER TABLE episodes RENAME COLUMN allanime_raw TO provider_raw")
         )
@@ -142,10 +136,22 @@ async def _init_db(db_engine: AsyncEngine) -> None:
     async with async_session() as db:
         # ── Column migrations (all before any ORM queries) ──────────────────
         _column_migrations = [
-            ("profiles", "ALTER TABLE profiles ADD COLUMN is_guest BOOLEAN DEFAULT 0 NOT NULL"),
-            ("profiles", "ALTER TABLE profiles ADD COLUMN max_concurrent_streams INTEGER"),
-            ("app_settings", "ALTER TABLE app_settings ADD COLUMN require_profile_pins BOOLEAN DEFAULT 0 NOT NULL"),
-            ("app_settings", "ALTER TABLE app_settings ADD COLUMN max_concurrent_streams INTEGER"),
+            (
+                "profiles",
+                "ALTER TABLE profiles ADD COLUMN is_guest BOOLEAN DEFAULT 0 NOT NULL",
+            ),
+            (
+                "profiles",
+                "ALTER TABLE profiles ADD COLUMN max_concurrent_streams INTEGER",
+            ),
+            (
+                "app_settings",
+                "ALTER TABLE app_settings ADD COLUMN require_profile_pins BOOLEAN DEFAULT 0 NOT NULL",
+            ),
+            (
+                "app_settings",
+                "ALTER TABLE app_settings ADD COLUMN max_concurrent_streams INTEGER",
+            ),
         ]
         for table, sql in _column_migrations:
             try:
@@ -170,9 +176,11 @@ async def _init_db(db_engine: AsyncEngine) -> None:
 
         # Initialize AppSettings singleton
         import secrets
+
         app_settings = await db.get(AppSettings, "singleton")
         if app_settings is None:
             import hashlib
+
             default_password = secrets.token_urlsafe(12)
             default_hash = hashlib.sha256(default_password.encode()).hexdigest()
             app_settings = AppSettings(

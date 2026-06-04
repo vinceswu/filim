@@ -119,20 +119,18 @@ class RecommendationService:
             trending_ids = (
                 select(
                     WatchProgress.show_id,
-                    func.count(func.distinct(WatchProgress.device_id)).label("device_count"),
+                    func.count(func.distinct(WatchProgress.device_id)).label(
+                        "device_count"
+                    ),
                 )
-                .where(
-                    WatchProgress.last_updated
-                    >= func.datetime("now", f"-30 days")
-                )
+                .where(WatchProgress.last_updated >= func.datetime("now", f"-30 days"))
                 .group_by(WatchProgress.show_id)
                 .order_by(text("device_count DESC"))
                 .limit(30)
             ).subquery()
 
-            stmt = (
-                select(Show)
-                .join(trending_ids, Show.source_id == trending_ids.c.show_id)
+            stmt = select(Show).join(
+                trending_ids, Show.source_id == trending_ids.c.show_id
             )
             rows = (await self.db.execute(stmt)).scalars().all()
         except Exception:
@@ -142,9 +140,7 @@ class RecommendationService:
         if len(items) < 10:
             popular = await self.catalog.source.get_popular_shows(limit=30)
             items = items + [
-                p
-                for p in popular
-                if not any(existing.id == p.id for existing in items)
+                p for p in popular if not any(existing.id == p.id for existing in items)
             ]
 
         return RecommendationSectionModel(
@@ -270,16 +266,14 @@ class RecommendationService:
         from sqlalchemy import text
 
         try:
-            result = await self.db.execute(
-                text("""
+            result = await self.db.execute(text("""
                     SELECT value AS genre, COUNT(DISTINCT source_id) AS cnt
                     FROM shows, json_each(genres)
                     WHERE genres IS NOT NULL
                     GROUP BY LOWER(value)
                     HAVING COUNT(DISTINCT source_id) >= 4
                     ORDER BY cnt DESC
-                """)
-            )
+                """))
             return [row[0].strip().title() for row in result.all() if row[0].strip()]
         except Exception:
             return []
@@ -392,9 +386,9 @@ class RecommendationService:
             deduped = [item for item in r.items if item.id not in seen_ids]
             seen_ids.update(item.id for item in deduped)
             if deduped:
-                sections.append(RecommendationSectionModel(
-                    id=r.id, title=r.title, items=deduped
-                ))
+                sections.append(
+                    RecommendationSectionModel(id=r.id, title=r.title, items=deduped)
+                )
 
         return sections
 

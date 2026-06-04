@@ -6,8 +6,17 @@ from typing import Optional
 from pydantic import BaseModel
 
 from app.core.cache import bust_cache_entry
-from app.sources import AllanimeCatalogAdapter, StreamCandidateModel, get_catalog_adapter
-from app.streams.resolver import ResolvedStream, StreamResolver, StreamResolverError, clear_clock_cache_for_candidates
+from app.sources import (
+    AllanimeCatalogAdapter,
+    StreamCandidateModel,
+    get_catalog_adapter,
+)
+from app.streams.resolver import (
+    ResolvedStream,
+    StreamResolver,
+    StreamResolverError,
+    clear_clock_cache_for_candidates,
+)
 
 _PARALLEL_CANDIDATES = 3  # race this many candidates concurrently
 
@@ -30,9 +39,7 @@ async def _resolve_first(
         return None, None
 
     tasks: dict[asyncio.Task, StreamCandidateModel] = {
-        asyncio.create_task(
-            resolver.resolve(c, preferred_quality=preferred_quality)
-        ): c
+        asyncio.create_task(resolver.resolve(c, preferred_quality=preferred_quality)): c
         for c in candidates
     }
     pending = set(tasks)

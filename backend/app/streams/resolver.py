@@ -15,7 +15,7 @@ from app.db.cache_store import cache_client
 from app.sources import StreamCandidateModel
 
 _CLOCK_CACHE_TTL = 315360000  # permanent
-_PROBE_CACHE_TTL = 300   # 5 minutes
+_PROBE_CACHE_TTL = 300  # 5 minutes
 
 # Shared connection pool reused across all resolver calls.
 _http_client: Optional[httpx.AsyncClient] = None
@@ -100,7 +100,9 @@ def _to_clock_json_url(url: str) -> str:
     return url
 
 
-async def clear_clock_cache_for_candidates(candidates: list[StreamCandidateModel]) -> None:
+async def clear_clock_cache_for_candidates(
+    candidates: list[StreamCandidateModel],
+) -> None:
     """Delete cached clock JSON for candidates, forcing fresh CDN URL resolution on next play."""
     for candidate in candidates:
         if "apivtwo/clock" not in candidate.url:
@@ -155,7 +157,9 @@ class StreamResolver:
             data = await flarefetch(clock_url)
 
         if not data:
-            raise StreamResolverError(f"Failed to resolve provider clock URL: {clock_url}")
+            raise StreamResolverError(
+                f"Failed to resolve provider clock URL: {clock_url}"
+            )
 
         try:
             await cache_client.setex(cache_key, _CLOCK_CACHE_TTL, json.dumps(data))
@@ -234,13 +238,17 @@ class StreamResolver:
                     stderr=asyncio.subprocess.PIPE,
                 )
                 try:
-                    stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=20)
+                    stdout, stderr = await asyncio.wait_for(
+                        proc.communicate(), timeout=20
+                    )
                 except asyncio.TimeoutError as exc:
                     try:
                         proc.kill()
                     except Exception:
                         pass
-                    raise StreamResolverError(f"yt-dlp resolution timed out for: {url}") from exc
+                    raise StreamResolverError(
+                        f"yt-dlp resolution timed out for: {url}"
+                    ) from exc
                 except asyncio.CancelledError:
                     try:
                         proc.kill()
@@ -255,9 +263,7 @@ class StreamResolver:
             ) from exc
 
         if proc.returncode != 0:
-            raise StreamResolverError(
-                f"yt-dlp failed with code {proc.returncode}"
-            )
+            raise StreamResolverError(f"yt-dlp failed with code {proc.returncode}")
 
         out_text = (stdout.decode() or "").strip()
         if not out_text:

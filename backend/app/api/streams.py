@@ -76,7 +76,9 @@ async def proxy_image(url: str = Query(...)) -> Response:
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"Image proxy error: {exc}") from exc
+        raise HTTPException(
+            status_code=502, detail=f"Image proxy error: {exc}"
+        ) from exc
 
 
 @router.get("/proxy")
@@ -97,7 +99,7 @@ async def proxy_stream(request: Request, url: str = Query(...)) -> StreamingResp
         upstream_headers["Range"] = range_header
 
     async def _stream():
-        async with _proxy_client.stream("GET", target_url, headers=upstream_headers) as resp:
+        async with _proxy_client.stream("GET", url, headers=upstream_headers) as resp:
             async for chunk in resp.aiter_bytes(chunk_size=65536):
                 yield chunk
 
@@ -171,7 +173,9 @@ async def get_episode_stream(
         description="Preferred stream variant id from the API list (e.g. v0, v1).",
         pattern="^v[0-9]+$",
     ),
-    refresh: bool = Query(False, description="Bust clock cache and re-resolve CDN URLs."),
+    refresh: bool = Query(
+        False, description="Bust clock cache and re-resolve CDN URLs."
+    ),
     device_token: Optional[str] = Query(None),
     request: Request = None,
     db: AsyncSession = Depends(get_db),

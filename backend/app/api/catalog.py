@@ -97,7 +97,9 @@ async def search_catalog(
             status_code=422,
             detail="Provide a non-empty q and/or at least one genre",
         )
-    items = await catalog.search(query=q.strip(), mode=mode, page=page, genres=genre_list)
+    items = await catalog.search(
+        query=q.strip(), mode=mode, page=page, genres=genre_list
+    )
     return {"items": [ShowSummaryResponse.from_source(i) for i in items]}
 
 
@@ -169,7 +171,9 @@ async def get_show_details(
         episodes=[EpisodeSummaryResponse.from_source(e) for e in episodes],
         synopsis=details.synopsis,
         tags=details.tags,
-        cover_image_url=_proxy_img(details.banner_image_url or details.poster_image_url),
+        cover_image_url=_proxy_img(
+            details.banner_image_url or details.poster_image_url
+        ),
         status=None,
         available_audio_languages=details.available_audio_languages,
     )

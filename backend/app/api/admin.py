@@ -50,6 +50,7 @@ async def require_admin(
 
 # ── Public ────────────────────────────────────────────────────────────────────
 
+
 class LoginBody(BaseModel):
     password: str
 
@@ -82,6 +83,7 @@ async def get_public_settings(db: AsyncSession = Depends(get_db)) -> dict:
 
 
 # ── Admin-only ────────────────────────────────────────────────────────────────
+
 
 class UpdateSettingsBody(BaseModel):
     admin_password: str | None = None
@@ -152,6 +154,7 @@ async def update_settings(
 
 # ── Admin profiles ────────────────────────────────────────────────────────────
 
+
 class AdminProfileResponse(BaseModel):
     id: str
     name: str
@@ -165,7 +168,11 @@ async def admin_list_profiles(
     _: AppSettings = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    rows = (await db.execute(select(Profile).order_by(Profile.created_at.asc()))).scalars().all()
+    rows = (
+        (await db.execute(select(Profile).order_by(Profile.created_at.asc())))
+        .scalars()
+        .all()
+    )
     return {
         "items": [
             AdminProfileResponse(

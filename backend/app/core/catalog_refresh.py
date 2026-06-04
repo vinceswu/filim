@@ -17,10 +17,10 @@ from app.core.constants import COMMON_GENRES
 
 logger = logging.getLogger(__name__)
 
-_POPULAR_INTERVAL = 7200    # 2 h
-_FULL_INTERVAL = 21600      # 6 h
-_STAGGER = 1.2              # seconds between upstream requests
-_MAX_BACKOFF = 1800         # 30 min
+_POPULAR_INTERVAL = 7200  # 2 h
+_FULL_INTERVAL = 21600  # 6 h
+_STAGGER = 1.2  # seconds between upstream requests
+_MAX_BACKOFF = 1800  # 30 min
 
 
 async def _upsert_batch(shows, db_factory) -> int:
@@ -60,7 +60,9 @@ async def refresh_genres(adapter, db_factory) -> int:
     for genre in COMMON_GENRES:
         for page in range(1, 3):
             try:
-                results = await adapter.search_shows(query="", genres=[genre], page=page)
+                results = await adapter.search_shows(
+                    query="", genres=[genre], page=page
+                )
                 total += await _upsert_batch(results, db_factory)
             except Exception as exc:
                 logger.warning("Genre refresh (%s page=%d): %s", genre, page, exc)
@@ -91,6 +93,12 @@ async def run_catalog_refresh(db_factory) -> None:
     adapter = get_catalog_adapter()
 
     await asyncio.gather(
-        _loop("Popular refresh", _POPULAR_INTERVAL, lambda: refresh_popular(adapter, db_factory)),
-        _loop("Full refresh", _FULL_INTERVAL, lambda: refresh_genres(adapter, db_factory)),
+        _loop(
+            "Popular refresh",
+            _POPULAR_INTERVAL,
+            lambda: refresh_popular(adapter, db_factory),
+        ),
+        _loop(
+            "Full refresh", _FULL_INTERVAL, lambda: refresh_genres(adapter, db_factory)
+        ),
     )

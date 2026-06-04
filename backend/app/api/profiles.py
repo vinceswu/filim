@@ -87,7 +87,9 @@ async def create_profile(
                 detail=f"Profile limit of {settings.max_profiles} reached",
             )
     if settings and settings.require_profile_pins and not body.pin:
-        raise HTTPException(status_code=403, detail="A PIN is required for all profiles")
+        raise HTTPException(
+            status_code=403, detail="A PIN is required for all profiles"
+        )
     profile = await service.create_profile(name=body.name, pin=body.pin)
     return ProfileResponse.from_model(profile)
 

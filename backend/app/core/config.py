@@ -24,7 +24,9 @@ class Settings:
         self.host: str = constants.DEFAULT_HOST
         self.port: int = constants.DEFAULT_PORT
 
-        self.allanime_api_url: str = os.environ.get("ALLANIME_API_URL", constants.ALLANIME_API_URL)
+        self.allanime_api_url: str = os.environ.get(
+            "ALLANIME_API_URL", constants.ALLANIME_API_URL
+        )
         self.allanime_base_url: str = constants.ALLANIME_BASE_URL
         self.allanime_referer: str = constants.ALLANIME_REFERER
         self.http_timeout_seconds: float = constants.HTTP_TIMEOUT_SECONDS
@@ -32,10 +34,14 @@ class Settings:
         self.trending_window_days: int = constants.TRENDING_WINDOW_DAYS
         self.log_level: str = os.environ.get("LOG_LEVEL", constants.DEFAULT_LOG_LEVEL)
 
-        self.flaresolverr_url: str = os.environ.get("FLARESOLVERR_URL", "http://localhost:8191/v1")
+        self.flaresolverr_url: str = os.environ.get(
+            "FLARESOLVERR_URL", "http://localhost:8191/v1"
+        )
 
         _cors = os.environ.get("CORS_ORIGINS", "*")
-        self.cors_origins: list[str] = [o.strip() for o in _cors.split(",") if o.strip()]
+        self.cors_origins: list[str] = [
+            o.strip() for o in _cors.split(",") if o.strip()
+        ]
 
     @property
     def project_root(self) -> str:

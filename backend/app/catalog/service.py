@@ -14,7 +14,12 @@ from app.core.constants import (
 )
 from app.core.utils import normalize_title
 from app.models import Show, WatchProgress
-from app.sources import AllanimeCatalogAdapter, EpisodeSummaryModel, ShowSummaryModel, get_catalog_adapter
+from app.sources import (
+    AllanimeCatalogAdapter,
+    EpisodeSummaryModel,
+    ShowSummaryModel,
+    get_catalog_adapter,
+)
 
 
 def _franchise_search_query(title: str | None, english_title: str | None) -> str | None:
@@ -53,6 +58,7 @@ class CatalogService:
 
     async def _db_genre_exists(self, genre: str) -> bool:
         from sqlalchemy import text
+
         result = await self.db.execute(
             text("""
                 SELECT 1 FROM shows, json_each(genres)
@@ -68,6 +74,7 @@ class CatalogService:
     ) -> list[ShowSummaryModel]:
         import json as _json
         from sqlalchemy import text
+
         offset = (page - 1) * limit
         result = await self.db.execute(
             text("""
@@ -97,16 +104,18 @@ class CatalogService:
                 tags = raw
             else:
                 tags = []
-            out.append(ShowSummaryModel(
-                id=row["source_id"],
-                title=row["title"],
-                english_title=row["english_title"],
-                episode_count=row["episode_count"] or 0,
-                synopsis=row["synopsis"],
-                tags=tags,
-                poster_image_url=row["poster_url"],
-                banner_image_url=row["cover_image_url"],
-            ))
+            out.append(
+                ShowSummaryModel(
+                    id=row["source_id"],
+                    title=row["title"],
+                    english_title=row["english_title"],
+                    episode_count=row["episode_count"] or 0,
+                    synopsis=row["synopsis"],
+                    tags=tags,
+                    poster_image_url=row["poster_url"],
+                    banner_image_url=row["cover_image_url"],
+                )
+            )
         return out
 
     async def search(
@@ -291,8 +300,12 @@ class CatalogService:
             trending_ids = (
                 select(
                     WatchProgress.show_id,
-                    func.count(func.distinct(WatchProgress.device_id)).label("device_count"),
-                    func.coalesce(func.sum(WatchProgress.duration_seconds), 0).label("watch_time"),
+                    func.count(func.distinct(WatchProgress.device_id)).label(
+                        "device_count"
+                    ),
+                    func.coalesce(func.sum(WatchProgress.duration_seconds), 0).label(
+                        "watch_time"
+                    ),
                 )
                 .where(
                     WatchProgress.last_updated
@@ -304,24 +317,25 @@ class CatalogService:
                 .offset((page - 1) * limit)
             ).subquery()
 
-            stmt = (
-                select(Show)
-                .join(trending_ids, Show.source_id == trending_ids.c.show_id)
+            stmt = select(Show).join(
+                trending_ids, Show.source_id == trending_ids.c.show_id
             )
             rows = (await self.db.execute(stmt)).scalars().all()
             if rows:
-                return self._deduplicate_results([
-                    ShowSummaryModel(
-                        id=row.source_id,
-                        title=row.title,
-                        episode_count=row.episode_count or 0,
-                        synopsis=row.synopsis,
-                        tags=row.genres or [],
-                        poster_image_url=row.poster_url,
-                        banner_image_url=row.cover_image_url,
-                    )
-                    for row in rows
-                ])
+                return self._deduplicate_results(
+                    [
+                        ShowSummaryModel(
+                            id=row.source_id,
+                            title=row.title,
+                            episode_count=row.episode_count or 0,
+                            synopsis=row.synopsis,
+                            tags=row.genres or [],
+                            poster_image_url=row.poster_url,
+                            banner_image_url=row.cover_image_url,
+                        )
+                        for row in rows
+                    ]
+                )
         except Exception:
             pass
 

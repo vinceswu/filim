@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
+from app.core.config import settings
 from app.core.logger import setup_logging
 
 
@@ -33,6 +34,7 @@ def create_app() -> FastAPI:
             except (asyncio.CancelledError, Exception):
                 pass
         from app.core.flaresolverr import destroy_all_sessions
+
         await destroy_all_sessions()
         await cache_client.stop_cleanup()
 

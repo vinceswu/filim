@@ -97,7 +97,9 @@ class PreferencesService:
             await self.db.execute(stmt)
 
         await self.db.commit()
-        return await self._build_single(preferred_show_id=show_id, profile_id=profile_id)
+        return await self._build_single(
+            preferred_show_id=show_id, profile_id=profile_id
+        )
 
     async def set_rating(
         self,
@@ -131,7 +133,9 @@ class PreferencesService:
                 row.rating = rating
 
         await self.db.commit()
-        return await self._build_single(preferred_show_id=show_id, profile_id=profile_id)
+        return await self._build_single(
+            preferred_show_id=show_id, profile_id=profile_id
+        )
 
     async def _build_single(
         self, preferred_show_id: str, profile_id: str

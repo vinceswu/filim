@@ -48,10 +48,7 @@ def cache_response(
             try:
                 cached = await redis_client.get(key)
                 if cached:
-                    if (
-                        await redis_client.is_stale(key)
-                        and key not in _refreshing_keys
-                    ):
+                    if await redis_client.is_stale(key) and key not in _refreshing_keys:
                         _refreshing_keys.add(key)
                         asyncio.create_task(
                             _background_refresh(
@@ -91,7 +88,9 @@ def cache_response(
     return decorator
 
 
-async def bust_cache_entry(func_name: str, key_prefix: str = "filim:cache:v2:", *args: Any, **kwargs: Any) -> None:
+async def bust_cache_entry(
+    func_name: str, key_prefix: str = "filim:cache:v2:", *args: Any, **kwargs: Any
+) -> None:
     """Delete a single cache entry by function name + args+kwargs (mirrors cache_response key generation)."""
     arg_str = json.dumps([args, kwargs], sort_keys=True, default=str)
     arg_hash = hashlib.md5(arg_str.encode()).hexdigest()
